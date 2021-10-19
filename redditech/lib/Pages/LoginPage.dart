@@ -10,8 +10,10 @@ class LoginPage extends StatelessWidget {
     final response = await FlutterWebAuth.authenticate(
         url:
             "https://www.reddit.com/api/v1/authorize?client_id=d24KuCnv30paH6vY2-61Bw&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=read",
-        callbackUrlScheme: "com.example.redditech://callback");
-    print(response.length);
+        callbackUrlScheme: "com.example.redditech");
+    var uri = Uri.parse(response);
+    print(uri.queryParameters['code']);
+    print("Hello my friend");
   }
 
   Widget build(BuildContext context) {
