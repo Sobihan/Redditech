@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:redditech/globals.dart' as globals;
 
-class LoginPage extends StatelessWidget {
-  void signinReddit() async {
-    // const String id = 'd24KuCnv30paH6vY2-61Bw';
-  }
+class loginPage extends StatelessWidget {
   void signInReddit() async {
-    // final String id = "d24KuCnv30paH6vY2-61Bw";
     final response = await FlutterWebAuth.authenticate(
         url:
-            "https://www.reddit.com/api/v1/authorize?client_id=d24KuCnv30paH6vY2-61Bw&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=read",
+            'https://www.reddit.com/api/v1/authorize?client_id=${globals.clientID}&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=read',
         callbackUrlScheme: "com.example.redditech");
     var uri = Uri.parse(response);
-    print(uri.queryParameters['code']);
-    print("Hello my friend");
+    print('Access Token: ${uri.queryParameters['code']}');
   }
 
   Widget build(BuildContext context) {
-    print("Hello");
     final ButtonStyle style = ElevatedButton.styleFrom(
         textStyle: const TextStyle(fontSize: 20), primary: Colors.orange[400]);
 
