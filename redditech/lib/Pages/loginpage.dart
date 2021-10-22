@@ -4,7 +4,31 @@ import 'package:redditech/globals.dart' as globals;
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-class loginPage extends StatelessWidget {
+class loginpage extends StatefulWidget {
+  login createState() => login();
+}
+
+class login extends State<loginpage> with TickerProviderStateMixin {
+  bool reloading = false;
+  late AnimationController controller;
+  @override
+  void initState() {
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..addListener(() {
+        setState(() {});
+      });
+    controller.repeat();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   Future<Uri> getRedditCode() async {
     final response = await FlutterWebAuth.authenticate(
         url:
@@ -16,6 +40,9 @@ class loginPage extends StatelessWidget {
   }
 
   void signInReddit() async {
+    setState(() {
+      reloading = true;
+    });
     String password = "";
     String basicAuth =
         "Basic " + base64Encode(utf8.encode('${globals.clientID}:$password'));
@@ -31,6 +58,9 @@ class loginPage extends StatelessWidget {
         }));
     if (responseAuth.statusCode == 200) {
       print('Access Token: ${responseAuth.data['access_token']}');
+      setState(() {
+        reloading = false;
+      });
     } else {
       print("Error on Access Token");
     }
@@ -45,11 +75,18 @@ class loginPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const SizedBox(height: 30),
-          ElevatedButton(
-            style: style,
-            onPressed: signInReddit,
-            child: const Text('Connect with Reddit'),
-          ),
+          reloading
+              ? CircularProgressIndicator(
+                  value: controller.value,
+                  semanticsLabel: 'Linear progress indicator',
+                  backgroundColor: Colors.grey,
+                  color: Colors.orange[400],
+                )
+              : ElevatedButton(
+                  style: style,
+                  onPressed: signInReddit,
+                  child: const Text('Connect with Reddit'),
+                )
         ],
       ),
     );
