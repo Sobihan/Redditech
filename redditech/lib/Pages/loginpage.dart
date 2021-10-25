@@ -3,12 +3,15 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:redditech/globals.dart' as globals;
 import 'package:dio/dio.dart';
 import 'dart:convert';
+import '../Components/navigation.dart';
 
-class loginpage extends StatefulWidget {
-  login createState() => login();
+class Loginpage extends StatefulWidget {
+  const Loginpage({Key? key}) : super(key: key);
+  @override
+  Login createState() => Login();
 }
 
-class login extends State<loginpage> with TickerProviderStateMixin {
+class Login extends State<Loginpage> with TickerProviderStateMixin {
   bool reloading = false;
   late AnimationController controller;
   @override
@@ -35,7 +38,6 @@ class login extends State<loginpage> with TickerProviderStateMixin {
             'https://www.reddit.com/api/v1/authorize?client_id=${globals.clientID}&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=read',
         callbackUrlScheme: "com.example.redditech");
     Uri uri = Uri.parse(response);
-    print('Code: ${uri.queryParameters['code']}');
     return uri;
   }
 
@@ -57,18 +59,23 @@ class login extends State<loginpage> with TickerProviderStateMixin {
           'Content-Type': 'application/x-www-form-urlencoded'
         }));
     if (responseAuth.statusCode == 200) {
-      print('Access Token: ${responseAuth.data['access_token']}');
+      String accessToken = responseAuth.data['access_token'].toString();
       setState(() {
         reloading = false;
       });
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Navigation(accessToken: accessToken)));
     } else {
       print("Error on Access Token");
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(
-        textStyle: const TextStyle(fontSize: 20), primary: Colors.orange[400]);
+        textStyle: const TextStyle(fontSize: 20), primary: Colors.red[400]);
 
     return Center(
       child: Column(
@@ -80,7 +87,7 @@ class login extends State<loginpage> with TickerProviderStateMixin {
                   value: controller.value,
                   semanticsLabel: 'Linear progress indicator',
                   backgroundColor: Colors.grey,
-                  color: Colors.orange[400],
+                  color: Colors.red[400],
                 )
               : ElevatedButton(
                   style: style,
