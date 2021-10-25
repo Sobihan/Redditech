@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.redditech">
+    
    <application
         android:label="redditech"
         android:icon="@mipmap/ic_launcher">
@@ -48,4 +49,5 @@
     </activity>
           <!---->
     </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
