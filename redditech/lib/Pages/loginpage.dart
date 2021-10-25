@@ -32,13 +32,20 @@ class Login extends State<Loginpage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<Uri> getRedditCode() async {
-    final response = await FlutterWebAuth.authenticate(
-        url:
-            'https://www.reddit.com/api/v1/authorize?client_id=${globals.clientID}&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=read',
-        callbackUrlScheme: "com.example.redditech");
-    Uri uri = Uri.parse(response);
-    return uri;
+  Future<String> getRedditCode() async {
+    dynamic response;
+    try {
+      response = await FlutterWebAuth.authenticate(
+          url:
+              'https://www.reddit.com/api/v1/authorize?client_id=${globals.clientID}&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=read',
+          callbackUrlScheme: "com.example.redditech");
+    } catch (error) {
+      setState(() {
+        reloading = false;
+      });
+      return "error";
+    }
+    return response;
   }
 
   void signInReddit() async {
@@ -49,7 +56,9 @@ class Login extends State<Loginpage> with TickerProviderStateMixin {
     String basicAuth =
         "Basic " + base64Encode(utf8.encode('${globals.clientID}:$password'));
     var dio = Dio();
-    final uri = await getRedditCode();
+    final response = await getRedditCode();
+    if (response == "error") return;
+    Uri uri = Uri.parse(response);
     final responseAuth = await dio.post(
         "https://www.reddit.com/api/v1/access_token",
         data:
