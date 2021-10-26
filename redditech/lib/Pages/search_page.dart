@@ -21,8 +21,17 @@ class _SearchPage extends State<SearchPage> {
     });
   }
 
+  void cleanButton() {
+    _controller.clear();
+    setState(() {
+      _subreddits.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    const TextStyle style =
+        TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
     return Column(
       children: [
         TextField(
@@ -39,7 +48,7 @@ class _SearchPage extends State<SearchPage> {
                     IconButton(
                       color: Colors.grey,
                       icon: const Icon(Icons.clear),
-                      onPressed: _controller.clear,
+                      onPressed: cleanButton,
                     ),
                     IconButton(
                       color: Colors.red,
@@ -58,18 +67,18 @@ class _SearchPage extends State<SearchPage> {
                     return Container();
                   } else {
                     return ListTile(
-                        title: Text(_subreddits[index].name),
+                        title: Text(_subreddits[index].name, style: style),
                         leading: _subreddits[index].iconImage.isNotEmpty
                             ? CircleAvatar(
                                 backgroundImage:
                                     NetworkImage(_subreddits[index].iconImage))
                             : const CircleAvatar(
                                 backgroundColor: Colors.red,
-                                child: Text('?',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold))),
-                        trailing: Text("Hello"));
+                                child: Text('?', style: style)),
+                        trailing: Text(
+                          '${_subreddits[index].subscriberCount.toString()} subscribers',
+                          style: style,
+                        ));
                   }
                 }))
       ],
