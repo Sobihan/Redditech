@@ -37,7 +37,7 @@ class Login extends State<Loginpage> with TickerProviderStateMixin {
     try {
       response = await FlutterWebAuth.authenticate(
           url:
-              'https://www.reddit.com/api/v1/authorize?client_id=${globals.clientID}&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=read',
+              'https://www.reddit.com/api/v1/authorize?client_id=${globals.clientID}&response_type=code&state=TEST&redirect_uri=com.example.redditech://callback&scope=identity,edit,flair,history,modconfig,modflair,modlog,modposts,modwiki,mysubreddits,privatemessages,read,report,save,submit,subscribe,vote,wikiedit,wikiread',
           callbackUrlScheme: "com.example.redditech");
     } catch (error) {
       setState(() {
