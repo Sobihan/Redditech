@@ -31,6 +31,7 @@ class _Navigation extends State<Navigation> {
         backgroundColor: Colors.red[400],
         title: const Text("Redditech"),
       ),
+      resizeToAvoidBottomInset: false,
       body: pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.red[400],

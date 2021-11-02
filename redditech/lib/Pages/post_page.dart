@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:redditech/Components/post.dart';
 
 class PostPage extends StatefulWidget {
   final String accessToken;
@@ -10,6 +12,10 @@ class PostPage extends StatefulWidget {
 class _PostPage extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
-    return Text('Post Page: ${widget.accessToken}');
+    return ListView(
+      children: [
+        Post(description: "hello", media: "https://i.redd.it/4wz4e8fkr2x71.jpg")
+      ],
+    );
   }
 }
