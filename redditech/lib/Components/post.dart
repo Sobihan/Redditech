@@ -13,18 +13,21 @@ class Post extends StatefulWidget {
 class _Post extends State<Post> {
   @override
   Widget build(BuildContext context) {
-    if (widget.media.contains('null')) {
-      return Text(widget.description);
+    TextStyle style = TextStyle(fontSize: 20);
+    if (widget.media.contains('null') || widget.media.contains('/comments/')) {
+      return Text(widget.description, style: style);
     } else if (widget.media.contains('.mp4')) {
       return Column(
-        children: [Text(widget.description)],
+        children: [Text(widget.description, style: style)],
       );
-    } else {
+    } else if (widget.media.contains('.jpg') || widget.media.contains('.png')) {
       print('heuu');
       return Column(children: [
-        Text(widget.description),
+        Text(widget.description, style: style),
         Image.network(widget.media, fit: BoxFit.fitWidth)
       ]);
+    } else {
+      return Text(widget.description, style: style);
     }
   }
 }
