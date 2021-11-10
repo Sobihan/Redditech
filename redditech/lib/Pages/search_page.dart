@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import '../service.dart';
 import '../Model/subreddit.dart';
@@ -12,12 +13,23 @@ class SearchPage extends StatefulWidget {
 class _SearchPage extends State<SearchPage> {
   final TextEditingController _controller = TextEditingController();
   List<Subreddit> _subreddits = [];
+  List _mySub = [];
 
   void onPressed() async {
-    String data =
+    List<Subreddit> sub = [];
+    var response =
         await searchSubreddits(widget.accessToken, _controller.text.toString());
+    for (int i = 0; i < response.data['subreddits'].length; i++) {
+      var subreddit = response.data['subreddits'][i];
+      sub.add(Subreddit(
+          subscriberCount: subreddit['subscriber_count'],
+          iconImage: subreddit['icon_img'],
+          name: subreddit['name']));
+    }
+    var mySub = await subredditsSubscribed(widget.accessToken);
     setState(() {
-      _subreddits = parseSubreddit(data);
+      _subreddits = sub;
+      _mySub = mySub;
     });
   }
 
@@ -25,6 +37,28 @@ class _SearchPage extends State<SearchPage> {
     _controller.clear();
     setState(() {
       _subreddits.clear();
+    });
+  }
+
+  bool checkSub(String subName) {
+    if (_mySub.contains(subName.toLowerCase())) {
+      return true;
+    }
+    return false;
+  }
+
+  void _subUnSub(String name) async {
+    bool isSub = checkSub(name);
+    var id = await getID(name);
+
+    if (!isSub) {
+      var response = await subscribe(id, widget.accessToken);
+    } else {
+      var response = await unsubscribe(id, widget.accessToken);
+    }
+    var mySub = await subredditsSubscribed(widget.accessToken);
+    setState(() {
+      _mySub = mySub;
     });
   }
 
@@ -67,18 +101,28 @@ class _SearchPage extends State<SearchPage> {
                     return Container();
                   } else {
                     return ListTile(
-                        title: Text(_subreddits[index].name, style: style),
-                        leading: _subreddits[index].iconImage.isNotEmpty
-                            ? CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(_subreddits[index].iconImage))
-                            : const CircleAvatar(
-                                backgroundColor: Colors.red,
-                                child: Text('?', style: style)),
-                        trailing: Text(
-                          '${_subreddits[index].subscriberCount.toString()} subscribers',
-                          style: style,
-                        ));
+                      title: Text(
+                          '${_subreddits[index].name}\n ${_subreddits[index].subscriberCount} subscribers',
+                          style: style),
+                      leading: _subreddits[index].iconImage.isNotEmpty
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(_subreddits[index].iconImage))
+                          : const CircleAvatar(
+                              backgroundColor: Colors.red,
+                              child: Text('?', style: style)),
+                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                        IconButton(
+                            onPressed: () =>
+                                {_subUnSub(_subreddits[index].name)},
+                            icon: Icon(checkSub(_subreddits[index].name) == true
+                                ? Icons.star
+                                : Icons.star_border)),
+                        IconButton(
+                            onPressed: () => {},
+                            icon: const Icon(Icons.remove_red_eye_rounded)),
+                      ]),
+                    );
                   }
                 }))
       ],
