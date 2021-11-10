@@ -13,6 +13,7 @@ class _PostPage extends State<PostPage> with TickerProviderStateMixin {
   List _posts = [];
   bool reloading = true;
   late AnimationController controller;
+  String sort = "new";
   @override
   void initState() {
     _getPost();
@@ -33,41 +34,78 @@ class _PostPage extends State<PostPage> with TickerProviderStateMixin {
   }
 
   void _getPost() async {
+    setState(() {
+      reloading = true;
+    });
     List data = await subredditsSubscribed(widget.accessToken);
     for (int i = 0; i < data.length; i++) {
-      var response = await getSubredditsPost(data[i], widget.accessToken);
+      var response =
+          await getSubredditsPost(data[i], widget.accessToken, sort: sort);
       for (int j = 0; j < response.data['data']['children'].length; j++) {
         String descrpition =
-            response.data['data']['children'][j]['data']['title'].toString();
+            'r/${response.data['data']['children'][j]['data']['subreddit'].toString()}/${response.data['data']['children'][j]['data']['title'].toString()}';
         String url =
             response.data['data']['children'][j]['data']['url'].toString();
         _posts.add(Post(description: descrpition, media: url));
       }
     }
     setState(() {
-      _posts.shuffle();
       reloading = false;
     });
   }
 
+  void reload(String stateSort) async {
+    setState(() {
+      sort = stateSort;
+      _posts.clear();
+    });
+    _getPost();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: _posts.length,
-        itemBuilder: (context, index) {
-          if (_posts.isEmpty) {
-            return CircularProgressIndicator(
-              value: controller.value,
-              semanticsLabel: 'Linear progress indicator',
-              backgroundColor: Colors.grey,
-              color: Colors.red[400],
-            );
-          } else {
-            return Container(
-                color: Colors.orange,
-                child: _posts[index],
-                margin: const EdgeInsets.only(bottom: 10));
-          }
-        });
+    final ButtonStyle style = ElevatedButton.styleFrom(
+        textStyle: const TextStyle(fontSize: 20), primary: Colors.red[400]);
+    if (reloading) {
+      return Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        const SizedBox(height: 30),
+        CircularProgressIndicator(
+          value: controller.value,
+          semanticsLabel: 'Linear progress indicator',
+          backgroundColor: Colors.grey,
+          color: Colors.red[400],
+        )
+      ]));
+    } else {
+      return Column(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          ElevatedButton(
+            style: style,
+            onPressed: () => {reload('best')},
+            child: const Text('Best'),
+          ),
+          ElevatedButton(
+            style: style,
+            onPressed: () => {reload('hot')},
+            child: const Text('Hot'),
+          ),
+          ElevatedButton(
+            style: style,
+            onPressed: () => {reload('new')},
+            child: const Text('New'),
+          )
+        ]),
+        Expanded(
+            child: ListView.builder(
+                itemCount: _posts.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                      color: Colors.orange,
+                      child: _posts[index],
+                      margin: const EdgeInsets.only(bottom: 20));
+                }))
+      ]);
+    }
   }
 }

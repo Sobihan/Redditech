@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'dart:developer' as developer;
 
 Future<String> searchSubreddits(String accessToken, String subreddit) async {
   Uri uri = Uri.https(
@@ -50,7 +49,7 @@ Future<dynamic> getSubredditsPost(String subreddit, String accessToken,
         "User-Agent": 'com.example.redditech (by /u/Sobihan)',
         'Authorization': 'bearer' + accessToken,
       }));
-  // developer.log(response.data['data']['children'][0]['data']['url'].toString());
+  // developer.log(response.data['data']['children'][0]['data'].toString());
   // developer
   //     .log(response.data['data']['children'][0]['data']['title'].toString());
   // developer.log(response.data['data']['after'].toString());

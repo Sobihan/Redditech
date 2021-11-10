@@ -13,12 +13,15 @@ class Post extends StatefulWidget {
 class _Post extends State<Post> {
   @override
   Widget build(BuildContext context) {
-    TextStyle style = TextStyle(fontSize: 20);
+    TextStyle style = const TextStyle(fontSize: 20);
     if (widget.media.contains('null') || widget.media.contains('/comments/')) {
       return Text(widget.description, style: style);
     } else if (widget.media.contains('.mp4')) {
       return Column(
-        children: [Text(widget.description, style: style)],
+        children: [
+          Text(widget.description, style: style),
+          VideoPlayerScreen(url: widget.media)
+        ],
       );
     } else if (widget.media.contains('.jpg') || widget.media.contains('.png')) {
       print('heuu');

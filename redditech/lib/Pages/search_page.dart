@@ -39,9 +39,9 @@ class _SearchPage extends State<SearchPage> {
           onSubmitted: (value) => onPressed(),
           controller: _controller,
           decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               hintText: 'Enter a search term',
-              suffixIcon: Container(
+              suffixIcon: SizedBox(
                 width: 100,
                 child: Row(
                   children: [

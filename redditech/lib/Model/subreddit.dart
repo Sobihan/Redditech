@@ -20,7 +20,6 @@ class Subreddit {
 
 List<Subreddit> parseSubreddit(String body) {
   var subredditobjJson = jsonDecode(body)["subreddits"] as List;
-  print(jsonDecode(body));
   List<Subreddit> subredditobj =
       subredditobjJson.map((tagJson) => Subreddit.fromJson(tagJson)).toList();
   return subredditobj;
