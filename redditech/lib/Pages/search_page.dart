@@ -2,7 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import '../service.dart';
 import '../Model/subreddit.dart';
-import 'subredditpage.dart';
 
 class SearchPage extends StatefulWidget {
   final String accessToken;
@@ -63,15 +62,6 @@ class _SearchPage extends State<SearchPage> {
     });
   }
 
-  void viewSubreddit(String subName) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SubredditPage(
-              subredditName: subName, accessToken: widget.accessToken)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     const TextStyle style =
@@ -129,8 +119,7 @@ class _SearchPage extends State<SearchPage> {
                                 ? Icons.star
                                 : Icons.star_border)),
                         IconButton(
-                            onPressed: () =>
-                                {viewSubreddit(_subreddits[index].name)},
+                            onPressed: () => {},
                             icon: const Icon(Icons.remove_red_eye_rounded)),
                       ]),
                     );

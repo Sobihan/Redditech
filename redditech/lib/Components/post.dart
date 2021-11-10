@@ -24,7 +24,6 @@ class _Post extends State<Post> {
         ],
       );
     } else if (widget.media.contains('.jpg') || widget.media.contains('.png')) {
-      print('heuu');
       return Column(children: [
         Text(widget.description, style: style),
         Image.network(widget.media, fit: BoxFit.fitWidth)

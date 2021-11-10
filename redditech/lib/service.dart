@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'dart:developer' as developer;
 
 Future<dynamic> searchSubreddits(String accessToken, String subreddit) async {
   var dio = Dio();
@@ -85,4 +86,23 @@ Future<dynamic> unsubscribe(String subId, String accessToken) async {
     },
   );
   return response;
+}
+
+Future<Map<String, String>> getProfil(String accessToken) async {
+  Map<String, String> profil;
+  Uri uri = Uri.https("oauth.reddit.com", "api/v1/me");
+  final response = await http.get(uri, headers: {
+    'Authorization': 'bearer ' + accessToken,
+    'User-Agent': 'com.example.redditech (by /u/Sobihan)',
+  });
+  var json = jsonDecode(response.body);
+  developer.log(json['icon_img'].toString());
+  profil = {
+    "username": json['subreddit']['display_name'].toString(),
+    "img": json['icon_img'].split('?')[0].toString(),
+    "coins": json['subreddit']['coins'].toString(),
+    "subscribers": json['subreddit']['subscribers'].toString(),
+    "header_img": json['subreddit']['banner_img'].split('?')[0].toString()
+  };
+  return profil;
 }

@@ -76,8 +76,6 @@ class Login extends State<Loginpage> with TickerProviderStateMixin {
           context,
           MaterialPageRoute(
               builder: (context) => Navigation(accessToken: accessToken)));
-    } else {
-      print("Error on Access Token");
     }
   }
 
