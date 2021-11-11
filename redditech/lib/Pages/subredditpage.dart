@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../service.dart';
 import 'package:redditech/Components/post.dart';
-import 'dart:developer' as developer;
 
 class SubredditPage extends StatefulWidget {
   final String accessToken;

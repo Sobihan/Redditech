@@ -4,6 +4,7 @@ import 'package:redditech/globals.dart' as globals;
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import '../Components/navigation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({Key? key}) : super(key: key);
@@ -69,6 +70,10 @@ class Login extends State<Loginpage> with TickerProviderStateMixin {
         }));
     if (responseAuth.statusCode == 200) {
       String accessToken = responseAuth.data['access_token'].toString();
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(
+          'redditSoso', '$accessToken,${DateTime.now().toString()}');
+      print(prefs.getString('redditSoso'));
       setState(() {
         reloading = false;
       });

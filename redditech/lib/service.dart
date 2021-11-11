@@ -44,10 +44,6 @@ Future<dynamic> getSubredditsPost(String subreddit, String accessToken,
         "User-Agent": 'com.example.redditech (by /u/Sobihan)',
         'Authorization': 'bearer' + accessToken,
       }));
-  // developer.log(response.data['data']['children'][0]['data'].toString());
-  // developer
-  //     .log(response.data['data']['children'][0]['data']['title'].toString());
-  // developer.log(response.data['data']['after'].toString());
   return response;
 }
 
