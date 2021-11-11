@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../service.dart';
 import 'package:redditech/Components/post.dart';
+import 'dart:developer' as developer;
 
 class SubredditPage extends StatefulWidget {
   final String accessToken;
@@ -19,10 +20,10 @@ class _SubredditPage extends State<SubredditPage>
   bool reloading = true;
   late AnimationController controller;
   String sort = "new";
-
+  String after = "";
   @override
   void initState() {
-    _getPost();
+    _getPost(false);
     controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
@@ -39,14 +40,17 @@ class _SubredditPage extends State<SubredditPage>
     super.dispose();
   }
 
-  void _getPost() async {
+  void _getPost(bool load) async {
     _mySub = await subredditsSubscribed(widget.accessToken);
-    setState(() {
-      reloading = true;
-    });
+
+    if (load == false) {
+      setState(() {
+        reloading = true;
+      });
+    }
     var response = await getSubredditsPost(
         widget.subredditName.toLowerCase(), widget.accessToken,
-        sort: sort);
+        sort: sort, after: after, count: 5);
     for (int i = 0; i < response.data['data']['children'].length; i++) {
       String description =
           response.data['data']['children'][i]['data']['title'].toString();
@@ -56,6 +60,7 @@ class _SubredditPage extends State<SubredditPage>
     }
     setState(() {
       reloading = false;
+      after = response.data['data']['after'].toString();
     });
   }
 
@@ -64,7 +69,7 @@ class _SubredditPage extends State<SubredditPage>
       sort = stateSort;
       _posts.clear();
     });
-    _getPost();
+    _getPost(false);
   }
 
   bool checkSub() {
@@ -136,14 +141,40 @@ class _SubredditPage extends State<SubredditPage>
                       )
                     ]),
                 Expanded(
-                    child: ListView.builder(
-                        itemCount: _posts.length,
-                        itemBuilder: (context, index) {
+                    child: NotificationListener<ScrollNotification>(
+                  child: ListView.builder(
+                      itemCount: _posts.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == _posts.length) {
+                          return Center(
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                const SizedBox(height: 30),
+                                CircularProgressIndicator(
+                                  value: controller.value,
+                                  semanticsLabel: 'Linear progress indicator',
+                                  backgroundColor: Colors.grey,
+                                  color: Colors.red[400],
+                                )
+                              ]));
+                        } else {
                           return Container(
                               color: Colors.orange,
                               child: _posts[index],
                               margin: const EdgeInsets.only(bottom: 20));
-                        }))
+                        }
+                      }),
+                  onNotification: (ScrollNotification scrollInfo) {
+                    if (scrollInfo.metrics.pixels ==
+                        scrollInfo.metrics.maxScrollExtent) {
+                      _getPost(true);
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  },
+                )),
               ]));
   }
 }
