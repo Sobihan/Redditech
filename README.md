@@ -1,6 +1,6 @@
 # Redditech
 
-A simple copy of the Reddit app using it's API in React Native
+A simple copy of the Reddit app using it's API in Flutter
 
 ## Author
 
